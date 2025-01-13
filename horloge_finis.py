@@ -3,63 +3,68 @@ import time
 import os
 import keyboard
 
-def boucle(t):
-    t = (t[0], t[1], t[2] + 1)
-    if t[2] == 60:
-        t = (t[0], t[1] + 1, 0)
-    if t[1] == 60:  
-        t = (t[0] + 1, 0, 0)
-    if t[0] == 24:
-        t = (0, 0, 0)
-    return t
+# ajoute les seconde, minutes et heure
+def boucle(tuple):
+    tuple = (tuple[0], tuple[1], tuple[2] + 1)
+    if tuple[2] == 60:
+        tuple = (tuple[0], tuple[1] + 1, 0)
+    if tuple[1] == 60:  
+        tuple = (tuple[0] + 1, 0, 0)
+    if tuple[0] == 24:
+        tuple = (0, 0, 0)
+    return tuple
             
-def afficher_heure(t, user_choice):
+# affiche l'heure en fonction du mode selectionné
+def afficher_heure(tuple, choix):
     os.system('cls')
-    if user_choice == "1":
-        hour = t[0] % 12 or 12
-        suffix = "AM" if t[0] < 12 else "PM"
-        print(f"{hour:02}:{t[1]:02}:{t[2]:02} {suffix}")
-    elif user_choice == "2":
-        print(f"{t[0]:02}:{t[1]:02}:{t[2]:02}")
+    if choix == "1":
+        heure = tuple[0] % 12 or 12
+        suffix = "AM" if tuple[0] < 12 else "PM"
+        print(f"{heure:02}:{tuple[1]:02}:{tuple[2]:02} {suffix}")
+    elif choix == "2":
+        print(f"{tuple[0]:02}:{tuple[1]:02}:{tuple[2]:02}")
 
+# met pause au script
 def pause():
-    input()
+    input("Entrée pour continuer...")
 
-def alarme(t, h, m, s):
-    if t[0] == h and t[1] == m and t[2] == s :
+# verifie si l'heure est egal à l'alarme
+def alarme(tuple, heure_alarme, minute_alarme, seconde_alarme):
+    if tuple[0] == heure_alarme and tuple[1] == minute_alarme and tuple[2] == seconde_alarme :
         for _ in range(3):
             os.system('cls')
             time.sleep(0.5)
-            print("it's time to wake up")
+            print("Ceci sert d'alarme")
             time.sleep(1)
 
+# demande de choisir entre le mode AM/PM ou 24h
 def am():
-    user_choice = input("""Affichage de l'heure:
+    choix = input("""Affichage de l'heure:
 1 - 12 heures AM/PM
 2 - 24 heures
 Faites votre choix : """)
     
-    if user_choice == "1":
-        return user_choice
-    elif user_choice == "2":
-        return user_choice
+    if choix == "1":
+        return choix
+    elif choix == "2":
+        return choix
     else:
         print("Choix invalide. Veuillez entrer 1 ou 2.")
         am()
 
+# commence le script
+tuple = (16, 30, 0)
+mtn = datetime.now()
+heure_alarme, minute_alarme, seconde_alarme = map(int, input("Entrez l'alarme (H M S) : ").split())
+choix = am()
 
-t = (16, 30, 0)
-now = datetime.now()
-formatted_time = now.strftime('%I:%M:%S %p')
-h, m, s = map(int, input("Entrez l'alarme (H M S) : ").split())
-user_choice = am()
-
+# boucle mere du script
 while True:
-    afficher_heure(t, user_choice)
-    alarme(t, h, m, s)
-    start_time = datetime.today().timestamp()
-    while datetime.today().timestamp() - start_time < 1:
+    afficher_heure(tuple, choix)
+    alarme(tuple, heure_alarme, minute_alarme, seconde_alarme)
+    debut_temps = datetime.today().timestamp()
+    while datetime.today().timestamp() - debut_temps < 1:
         if keyboard.is_pressed('backspace'):
             pause()
     
-    t = boucle(t)
+    tuple = boucle(tuple)
